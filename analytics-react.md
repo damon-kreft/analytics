@@ -1,7 +1,7 @@
 # Using the Analytics Data Layer Within React  
-This document covers how to apply analytics tracking using our [Data Layer](analytics.md), specifically within a React application.
+This document covers how to apply analytics tracking using our [Data Layer](README.md), specifically within a React application.
 
-This is a little more technical than the [Data Layer](analytics.md) document and requires some understanding of how a React application works.
+This is a little more technical than the [Data Layer](README.md) document and requires some understanding of how a React application works.
 
 There are three main topics:
 - Triggering the push of analytics data to our Data Layer.

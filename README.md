@@ -89,7 +89,7 @@ dataLayer.push('ProductClick', 'Product Schema', {
 The data above is validated against the `Product Schema` we have defined and it if fails, an error is thrown for us to handle.
 
 ### Plugins for External Services
-This will allow us to push analytics data to any number of external analytics services. The Data Layer will provide an adapter interface which accepts adapters specific to a service e.g. a Google Tag Manager adapter or an Adobe Analytics adapter. The job of the adapter is to take the data we push to our own Data Layer and subsequently push it to the 3rd party service, taking the data we have passed, translating it into a format that the external service understands and then sending it to where it needs to go.
+This will allow us to push analytics data to any number of external analytics services. The Data Layer will provide a plugin adapter interface which accepts adapters specific to a service e.g. a Google Tag Manager adapter or an Adobe Analytics adapter. The job of the adapter is to take the data we push to our own Data Layer and subsequently push it to the 3rd party service, taking the data we have passed, translating it into a format that the external service understands and then sending it to where it needs to go.
 
 ##### Google Tag Manager Adapter Example
 ```js

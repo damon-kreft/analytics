@@ -1,46 +1,39 @@
 # Analytics Introduction
-This is the proposed definition of the organisation's implementation of a Javascript library for tracking analytics data within its applications. How this generic Javascript library should be used specifically within a React application is defined in the separate [analytics-react.md](analytics-react.md) document.
+This is the proposed definition of the organisation's implementation of a flexible and reusable Javascript library for tracking analytics data within its applications.
 
-This library is agnostic to any 3rd party analytics services and therefore has no external dependencies. It is flexible enough to allow us to send data to multiple sources.
+_How this generic Javascript library can be used specifically within a React application is defined in the separate [analytics-react.md](analytics-react.md) document._
 
-Its API has been defined around what our requirements are right now, but also keeping in mind what we will likely need in future. Therefore, this is a proposal for what this library will potentially look like in its entirety and is not a proposal for what we should produce right now.
+This library is agnostic to any 3rd party analytics services (Adobe Analytics, Google Analytics, Google Tag Manager etc) and therefore has no external dependencies. It is flexible enough to allow us to send data to multiple sources.
 
-The last section in this document covers how we might break this down into multiple iterations of work, with the first version being the minimal viable product that covers our current requirements.
-
-This has been written to be as clear as possible to any team member, not just the technical team. It is to be used to agree upon the approach and then to help determine the level of work involved for production planning.
-
-_NOTE: This covers the technical requirements and additional coding work for the web application and not the additional requirements for the data that the app receives e.g. extra product data needed for analytics. The extra work the analytics team require around data is a discussion specifically with the data team._
+This has been written to be as clear as possible to any team member, not just the technical team.
 
 ##### A distinction between an 'event' and a 'trigger'
 
 Two words you will see a lot throughout this documentation. An 'event' is an action that occurs in our application, whether that be from user input such a click or typing into a text field, or non-user interaction driven by our code, such as the event of retrieving data. 'product data loaded' would be an event.
 
-A 'trigger' is something that happens in response to an event; in this context, the sending of analytics data. I.e. "The sending of product analytics data was triggered off the back of a product CTA click event". Multiple types of events can trigger the sending of the same analytics data.
-
-### What We Have Already Done vs. The Work We Need To Do
-For clarity, the initial analytics work we did was around how we capture any event that can happen in our app to then trigger the sending of analytics data. Whether that be on page load, button click or even on a non user interaction such as a forced page redirect or a pop-up that we automatically display after a certain period of time.
-
-Due to the nature of our application, we cannot rely on 3rd party analytics services to do any of the triggering work for us as with a traditional website e.g. Google Analytics automatically detecting and sending data on page load. This is something we need to take complete control of within our code.
-
-We required a flexible, robust, centralised and simple way for Developers to add and maintain the sending of analytics data off the back of any application event, as well as a mechanism to pull out any of the app's data at any given time. It also needed to be done in a way that fits in with technology we are using. Even though this work was required, it has given us a great deal of power over what data we send and when, with little development time going forward.
-
-Now we have the "How do we trigger analytics?" we need to answer the "What data do we send?" and in a way that is consistent, robust and easy to maintain. This is what this work will cover.
-
-_NOTE: As a starting point and proof of concept, we are currently sending a small amount of basic analytics data, but directly to GTM, using GTM's own data layer, in a GTM's specific format and in the simplest possible way. We now need to expand upon that._
+A 'trigger' is something that happens in response to an event; in this context, the sending of analytics data. I.e. "The sending of product analytics data was triggered off the back of a product item click event". Multiple types of events can trigger the sending of the same analytics data.
 
 # Analytics Data Layer
-The library we will build is inspired by Google Tag Manager's approach and will return a plain Javascript `Array` that has been extended with the functionality required to process and send analytics data to various sources. We will extend it with the following:
+The library is inspired by the approach of Google Tag Manager (GTM), as GTM's purpose is to solve the problem of using multiple analytics services within the same application:
+- The performance impact of including multiple snippets of analytics code within the same application.
+- The development and management overhead of having to capture generally the same analytics data but send it in the multiple different formats that each service expects, using each service's own specific API's and code libraries.
+
+In the future, ideally GTM is the only service we will need, but as it stands we need to run GTM in parallel with Adobe Analytics, hence the requirement for our own variation of GTM's Data Layer.
+
+In the same way that GTM's Data Layer works, this library will return a plain Javascript `Array` that has been extended with the functionality required to process and send analytics data to various sources. It is extended in the following way:
 
 ### Data Schemas
 
 ##### A `dataLayer.addSchema()` method
-This will provide a means for us to define any number of data schemas. A schema represents the structure and expected values of the list of analytics data to send to our external source after a given event e.g. a 'Main Menu' schema may have values specific only to menus, so we define a 'menuItemId' and 'menuItemName' which we send on the event of a menu item click. We may also have a 'Product' schema which has product specific data such as 'productId' and 'productCategory' which we send on the click of a product CTA.
+This will provide a means for us to define any number of data schemas. A schema represents the structure and expected values of the list of analytics data to send to our external sources after a given event e.g. a 'Main Menu' schema may have values specific only to menus, so we define a 'menuItemId' and 'menuItemName' which we send on the event of a menu item click. We may also have a 'Product' schema which has product specific data such as 'productId' and 'productCategory' which we send on the click of a product CTA.
 
 ##### Schema Validation
-In a schema, we define the names of the values of what we need to send, such as a 'productCategory'. We can also specify the expected format of that value, such as 'text', 'number' or perhaps one out of a fixed list of values such as 'book', 'mug' or 'canvas'. We can also specify whether the value is required or optional or if it has a default value in the absence of one provided. If validation fails, we will be alerted to fix the problem. This will help ensure that the data we send is always there, in the format that we expect and if it is not, we will know about it.
+In a schema, we define the names of the values of what we need to send, such as a 'productCategory'. We can also specify the expected format of that value, such as 'text', 'number' or perhaps one out of a fixed list of values such as 'book', 'mug' or 'canvas'. We can also specify whether the value is required or optional or if it has a default value in the absence of one provided. If validation fails, we will be alerted to fix the problem. This will help ensure that the data we wish to capture and send is always there, in the format that we expect. If it is not, we will know about it.
 
 ##### Schema Nesting
-The ability to 'nest' (or 'compose') schemas. Using the 'Main Menu' and 'Product' schema examples above, both will always include page level data such as 'pageHost' and 'pageTitle'. Rather than repeating those same values across both schemas, we can create a parent schema called 'Page' that specifies those values and then add the 'Main Menu' and 'Product' schemas as children of 'Page'. The child schemas then inherit those value definitions when used so we don't have to add and maintain the same list across multiple schemas (see the example below).
+The ability to 'nest' (or 'compose') schemas.
+
+Using the 'Main Menu' and 'Product' schema examples above, both will always include page level data such as 'pageHost' and 'pageTitle'. Rather than repeating those same values across both schemas, we can create a parent schema called 'Page' that specifies those values and then add the 'Main Menu' and 'Product' schemas as children of 'Page'. The child schemas then inherit those value definitions when used so we don't have to add and maintain the same list across multiple schemas (see the example below).
 
 ##### Schema Example
 ```js

@@ -16,7 +16,7 @@ A 'trigger' is something that happens in response to an event; in this context, 
 # Analytics Data Layer
 The library is inspired by the approach of Google Tag Manager (GTM), as GTM's purpose is to solve the problem of using multiple analytics services within the same application:
 - The performance impact of including multiple snippets of analytics code within the same application.
-- The development and management overhead of having to capture generally the same analytics data but send it in the multiple different formats that each service expects, using each service's own specific API's and code libraries.
+- The development, testing and management overhead of having to capture generally the same analytics data but send it in the multiple different formats that each service expects, using each service's own specific API's and code libraries.
 
 In the future, ideally GTM is the only service we will need, but as it stands we need to run GTM in parallel with Adobe Analytics, hence the requirement for our own variation of GTM's Data Layer.
 

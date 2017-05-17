@@ -25,7 +25,7 @@ In the same way that GTM's Data Layer works, this library will return a plain Ja
 ### Data Schemas
 
 ##### A `dataLayer.addSchema()` method
-This will provide a means for us to define any number of data schemas. A schema represents the structure and expected values of the list of analytics data to send to our external sources after a given event e.g. a 'Main Menu' schema may have values specific only to menus, so we define a 'menuItemId' and 'menuItemName' which we send on the event of a menu item click. We may also have a 'Product' schema which has product specific data such as 'productId' and 'productCategory' which we send on the click of a product CTA.
+This will provide a means for us to define any number of data schemas. A schema represents the structure and expected values of the list of analytics data to send to our external sources after a given event e.g. a 'Main Menu' schema may have values specific only to menus, so we define a 'menuItemId' and 'menuItemName' which we send on the event of a menu item click. We may also have a 'Product' schema which has product specific data such as 'productId' and 'productCategory' which we send on the click of a product item click.
 
 ##### Schema Validation
 In a schema, we define the names of the values of what we need to send, such as a 'productCategory'. We can also specify the expected format of that value, such as 'text', 'number' or perhaps one out of a fixed list of values such as 'book', 'mug' or 'canvas'. We can also specify whether the value is required or optional or if it has a default value in the absence of one provided. If validation fails, we will be alerted to fix the problem. This will help ensure that the data we wish to capture and send is always there, in the format that we expect. If it is not, we will know about it.
@@ -78,7 +78,7 @@ With our schemas defined, we can then start pushing analytics data to the Data L
 ```js
 import dataLayer from 'data-layer';
 
-dataLayer.push('ProductCTA', 'Product Schema', {
+dataLayer.push('ProductClick', 'Product Schema', {
   pageHost: '/range/books',
   pageTitle: 'Our Store - Books',
   productId: 123,

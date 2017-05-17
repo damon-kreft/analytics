@@ -111,5 +111,5 @@ const gtmAdapter = (window) => (dataLayer) => ({
 dataLayer.addAdapter(gtmAdapter(window));
 ```
 
-#### Debugging & Testing
+### Debugging & Testing
 Because our Data Layer is based on a plain Javascript `Array` (albeit, extended), we can easily test what is being pushed into it by our app either through the standard tools Developers use such as Chrome Dev Tools or we could eventually take that further and build a more in-depth and user friendly debugging tool to be used by non-Developers for QA (much like GTM's own). Analytics can also be tested automatically using an automated testing pipeline.

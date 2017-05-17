@@ -1,7 +1,7 @@
 # Analytics Introduction
 This is the proposed definition of the organisation's implementation of a flexible and reusable Javascript library for tracking analytics data within its applications.
 
-_How this generic Javascript library can be used specifically within a React application is defined in the separate [analytics-react.md](analytics-react.md) document._
+_NOTE: How this generic Javascript library can be used specifically within a React application is defined in the separate [analytics-react.md](analytics-react.md) document._
 
 This library is agnostic to any 3rd party analytics services (Adobe Analytics, Google Analytics, Google Tag Manager etc) and therefore has no external dependencies. It is flexible enough to allow us to send data to multiple sources.
 

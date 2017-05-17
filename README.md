@@ -113,18 +113,3 @@ dataLayer.addAdapter(gtmAdapter(window));
 
 #### Debugging & Testing
 Because our Data Layer is based on a plain Javascript `Array` (albeit, extended), we can easily test what is being pushed into it by our app either through the standard tools Developers use such as Chrome Dev Tools or we could eventually take that further and build a more in-depth and user friendly debugging tool to be used by non-Developers for QA (much like GTM's own). This can also be tested by our automated testing pipeline.
-
-# Iterations of Work
-This is to be discussed, but as a starting point:
-
-#### Version 1
-All features above except:
-- No 'nested' schema functionality.
-- No custom debug tools for non-technicals.
-
-#### Version 2
-This inludes everything excluded in version 1 except:
-- No custom debug tools for non-technicals.
-
-#### Version 3
-- Everything including a user friendly debug tool for QA by non-technicals.

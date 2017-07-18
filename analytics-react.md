@@ -10,9 +10,9 @@ There are three main topics:
 
 ### Pushing to the Data Layer
 The considerations for where and how we trigger a `dataLayer.push()` are as follows:
-- Centralise the configuration for the events that we need to listen to throughout the application (page load, clicks on specific buttons etc) which subsequently trigger pushes to the Data Layer. Dotting analytics specific triggers around our application would become more and more unmanageable over time rather than having a single location where this is configured.
+- Centralise the configuration for the events that we need to listen to throughout the application (page view, clicks on specific buttons etc) which subsequently trigger pushes to the Data Layer. Dotting analytics specific triggers around our application would become more and more unmanageable over time rather than having a single location where this is configured.
 - Tie how we listen to application events in with the technology we are using. We normally deal with application events through Redux actions (a Redux 'action' is broadly speaking synonymous with an 'event') so analytics should be in-keeping with this.
-- A way to manage the case where multiple events may tigger the same analytics data. What our application calls its events may not be a 1:1 mapping of what analytics call their events. E.g A user first loading the application, then clicking to change the page and then our code automatically redirecting the user back to the previous page (after the save of a form let's say) may be three distinct events (or Redux actions) in our application; 'app load', 'page change' and 'page redirect'. Analytics would call all three of these the same thing; a page load. We need a mechanism outside of Redux actions where can write code only once to watch for the URL change and trigger page change analytics.
+- A way to manage the case where multiple events may tigger the same analytics data. What our application calls its events may not be a 1:1 mapping of what analytics call their events. E.g A user first loading the application, then clicking to change the page and then our code automatically redirecting the user back to the previous page (after the save of a form let's say) may be three distinct events (or Redux actions) in our application; 'app load', 'page change' and 'page redirect'. Analytics would call all three of these the same thing; a page view. We need a mechanism outside of Redux actions where can write code only once to watch for the URL change and trigger page change analytics.
 
 With this in mind, Redux middleware has been created for a Developer to be able to listen to any Redux action and trigger code in response in one single location (in this case, pushing to the Data Layer).
 
@@ -24,12 +24,12 @@ import { addPostDispatchListeners } from '../redux/listenerMiddleware';
 // When any product click happens within the application, push product data to the analytics Data
 // Layer.
 addPostDispatchListeners('PRODUCT_CLICK', (action, store) => {
-  dataLayer.push('productCTA', 'Product Schema', {
+  dataLayer.push({
     'pagePath': store.getState().routing.pathname
     'productId': action.id,
     'productName': action.name,
     'productCategory': action.category
-  });
+  }, 'Product Schema', 'productCTA');
 });
 
 // NOTE: there are 'pre' and 'post' dispatch listener methods (`addPreDispatchListeners` and
@@ -44,9 +44,9 @@ import dataLayer from 'data-layer';
 import { addPostDispatchListeners } from '../redux/listenerMiddleware';
 
 addPostDispatchListeners(['APP_LOAD', 'PAGE_CHANGE', 'PAGE_REDIRECT'], (action, store) => {
-  dataLayer.push('pageChange', 'Page Schema', {
+  dataLayer.push({
     'pagePath': store.getState().routing.pathname
-  })
+  }, 'Page Schema', 'pageView')
 });
 ```
 The problem with this approach for that specific example is, if in future we create other events that result in a page change, we have to always remember to add the new event to this list.
@@ -61,9 +61,9 @@ addStateListeners((oldState, newState) => {
   const newPath = newState && newState.routing.pathname;
 
   if (oldPath !== newPath) {
-    dataLayer.push('pageChange', 'Page Schema', {
+    dataLayer.push({
       'pagePath': newPath
-    })
+    }, 'Page Schema', 'pageView')
   }
 });
 
